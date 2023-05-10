@@ -17,7 +17,7 @@ export default async function Home() {
   const ACCESS_TOKEN = cookieStore.get("Authorization")?.value;
   const REFRESH_TOKEN = cookieStore.get("RefreshToken")?.value;
 
-  console.log(ACCESS_TOKEN);
+  console.log("pageaccess", ACCESS_TOKEN);
 
   const userData = await GetUser(ACCESS_TOKEN)
     .then((res) => {
