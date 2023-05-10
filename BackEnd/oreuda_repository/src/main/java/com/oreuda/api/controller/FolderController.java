@@ -4,13 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.oreuda.api.domain.dto.FolderDto;
 import com.oreuda.api.domain.dto.InputFolderDto;
@@ -21,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/folder")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FolderController {
 
 	private final FolderService folderService;
@@ -78,7 +73,8 @@ public class FolderController {
 	 * @return
 	 */
 	@PatchMapping("rearrange")
-	public ResponseEntity<List<FolderDto>> rearrangeFolder(@RequestHeader String userId, @RequestBody FolderDto folderDto) {
+	public ResponseEntity<List<FolderDto>> rearrangeFolder(@RequestHeader String userId,
+		@RequestBody FolderDto folderDto) {
 		return new ResponseEntity(folderService.rearrangeFolder(userId, folderDto), HttpStatus.OK);
 	}
 }

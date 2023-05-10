@@ -9,10 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +18,7 @@ import java.util.Objects;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("api/v1/plant")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PlantController {
     private final PlantService plantService;
 
@@ -45,7 +43,12 @@ public class PlantController {
     }
 
     @GetMapping("/card")
-    public String getCard(@RequestHeader HttpHeaders headers) {
-        return "card";
+    public ResponseEntity<?> getCard(@RequestHeader HttpHeaders headers) {
+        log.info("getCard");
+        String svg =
+                "<svg width=\"100\" height=\"100\">\n" +
+                "  <circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"green\" stroke-width=\"4\" fill=\"yellow\" />\n" +
+                "</svg>";
+        return ResponseEntity.ok().body(svg);
     }
 }

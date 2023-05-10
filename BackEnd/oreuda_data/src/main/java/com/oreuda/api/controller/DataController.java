@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.*;
 import com.oreuda.api.client.PlantClient;
 import com.oreuda.api.service.RepositoryService;
 import com.oreuda.api.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/data")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DataController {
 
 	private final RepositoryService repositoryService;

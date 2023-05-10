@@ -39,20 +39,20 @@ spring:
         - id: repo-server
           uri: http://172.28.0.26:8070/
           predicates:
-            - Path=/api/v1/folder/**
+            - Path=/api/v1/folder/**, /api/v1/repository/**
           filters:
             - AuthorizationHeaderFilter
 
-        - id: repo-server
-          uri: http://172.28.0.26:8070/
-          predicates:
-            - Path=/api/v1/repository/**
-          filters:
-            - AuthorizationHeaderFilter
+        # - id: repo-server
+        #   uri: http://172.28.0.26:8070/
+        #   predicates:
+        #     - Path=/api/v1/repository/**
+        #   filters:
+        #     - AuthorizationHeaderFilter
 
         # auth-server
-        - id: auth-server
-          uri: http://172.28.0.23:8090/
+        - id: login-server
+          uri: http://52.79.221.133:8090/
           predicates:
             - Path=/oauth2/**
 

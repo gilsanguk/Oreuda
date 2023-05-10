@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/repository")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RepositoryController {
 
 	private final RepositoryService repositoryService;
@@ -34,7 +36,8 @@ public class RepositoryController {
 	 * @return
 	 */
 	@GetMapping("{folderId}")
-	public ResponseEntity<List<RepositoryDto>> getRepositories(@RequestHeader String userId, @PathVariable int folderId, @RequestParam String filtering) {
+	public ResponseEntity<List<RepositoryDto>> getRepositories(@RequestHeader String userId, @PathVariable int folderId,
+		@RequestParam String filtering) {
 		return new ResponseEntity<>(repositoryService.getRepositories(userId, folderId, filtering), HttpStatus.OK);
 	}
 
@@ -45,7 +48,8 @@ public class RepositoryController {
 	 * @return
 	 */
 	@PatchMapping
-	public ResponseEntity<List<RepositoryDto>> moveRepository(@RequestHeader String userId, @RequestBody InputRepositoryDto inputRepositoryDto) {
+	public ResponseEntity<List<RepositoryDto>> moveRepository(@RequestHeader String userId,
+		@RequestBody InputRepositoryDto inputRepositoryDto) {
 		return new ResponseEntity<>(repositoryService.moveRepository(userId, inputRepositoryDto), HttpStatus.OK);
 	}
 }
