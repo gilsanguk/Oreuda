@@ -1,24 +1,27 @@
 "use client";
 
 import Image from "next/image";
-import axios from "axios";
-// import { cookies } from "next/headers";
-import { setCookie } from "cookies-next";
-import { redirect } from "next/navigation";
 
 import st from "./statistic.module.scss";
-import { useState } from "react";
+import { useAppDispatch } from "@/store/hooks";
+import { setGithubId } from "@/store/modules/readme";
+import { useEffect } from "react";
 
 interface gitHubStatistic {
   title: string;
   count?: number;
   language?: string;
   howCount?: string;
-  imageName: string;
+  imageName?: string;
 }
 
 export default function Statistic(props: any) {
+  const dispatch = useAppDispatch();
   const { userData } = props;
+
+  useEffect(() => {
+    dispatch(setGithubId(userData?.nickname));
+  }, [dispatch, userData]);
 
   const gitHubStatistic: gitHubStatistic[] = [
     {
@@ -42,7 +45,7 @@ export default function Statistic(props: any) {
     {
       title: "주 언어",
       language: userData?.mainLanguage,
-      imageName: "typescript",
+      imageName: "language",
     },
   ];
 
@@ -62,7 +65,12 @@ export default function Statistic(props: any) {
               </span>
               <span>{e.language}</span>
             </div>
-            <Image src={`/images/main/${e.imageName}.svg`} alt="" width={80} height={80} />
+            <Image
+              src={`/images/main/${e.imageName}.svg`}
+              alt="주언어"
+              width={80}
+              height={80}
+            />
           </div>
         ))}
       </div>

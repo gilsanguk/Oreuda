@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import com.oreuda.api.client.PlantClient;
 import com.oreuda.api.service.RepositoryService;
 import com.oreuda.api.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/data")
 @RequiredArgsConstructor
@@ -21,10 +23,11 @@ public class DataController {
 	private final PlantClient plantClient;
 
 	@PatchMapping()
+	@CrossOrigin(origins = "*", allowedHeaders = "*")
 	public ResponseEntity<?> data(@RequestHeader String userId) {
 		repositoryService.getAllRepositories(userId);
 		userService.updateUser(userId);
-		// plantClient.notifyCompletion(userId); // 데이터 전처리 완료 알림
+		plantClient.notifyCompletion(userId); // 데이터 전처리 완료 알림
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

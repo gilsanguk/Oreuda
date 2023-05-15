@@ -1,9 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 import st from "./folder.module.scss";
+import React, { useEffect, useState } from "react";
 
-interface FolderList {
+import { ChangeFolder } from "@/Api/Folders/changeFolder";
+import { GetUserRefresh } from "@/Api/Oauth/getUserRefresh";
+import { saveCookiesAndRedirect } from "@/Api/Oauth/saveCookiesAndRedirect";
+
+export interface Folder {
   id: number;
   name: string;
   color: string;
@@ -11,159 +17,114 @@ interface FolderList {
   repositoryCount: number;
 }
 
-const folderList: FolderList[] = [
-  {
-    id: 1,
-    name: "FE",
-    color: "blue",
-    order: 1,
-    repositoryCount: 23,
-  },
-  {
-    id: 2,
-    name: "BE",
-    color: "green",
-    order: 2,
-    repositoryCount: 3,
-  },
-  {
-    id: 3,
-    name: "hello",
-    color: "yellow",
-    order: 3,
-    repositoryCount: 15,
-  },
-  {
-    id: 4,
-    name: "Algo",
-    color: "blue",
-    order: 4,
-    repositoryCount: 18,
-  },
-  {
-    id: 5,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-  {
-    id: 6,
-    name: "알려줘",
-    color: "green",
-    order: 6,
-    repositoryCount: 18,
-  },
-  {
-    id: 7,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-  {
-    id: 8,
-    name: "알려줘",
-    color: "green",
-    order: 6,
-    repositoryCount: 18,
-  },
-  {
-    id: 9,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-  {
-    id: 10,
-    name: "알려줘",
-    color: "green",
-    order: 6,
-    repositoryCount: 18,
-  },
-  {
-    id: 11,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-  {
-    id: 12,
-    name: "알려줘",
-    color: "green",
-    order: 6,
-    repositoryCount: 18,
-  },
-  {
-    id: 13,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-  {
-    id: 14,
-    name: "알려줘",
-    color: "green",
-    order: 6,
-    repositoryCount: 18,
-  },
-  {
-    id: 15,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-  {
-    id: 16,
-    name: "알려줘",
-    color: "green",
-    order: 6,
-    repositoryCount: 18,
-  },
-  {
-    id: 17,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-  {
-    id: 18,
-    name: "알려줘",
-    color: "green",
-    order: 6,
-    repositoryCount: 18,
-  },
-  {
-    id: 19,
-    name: "몰라요",
-    color: "yellow",
-    order: 5,
-    repositoryCount: 18,
-  },
-];
+export default function Folder(props: {
+  clickDelete: boolean;
+  folderList: Folder[];
+  checkedItems: number[];
+  setCheckedItems: React.Dispatch<React.SetStateAction<number[]>>;
+  loadFolderList: () => Promise<void>;
+}) {
+  const {
+    clickDelete,
+    folderList,
+    checkedItems,
+    setCheckedItems,
+    loadFolderList,
+  } = props;
+  const ACCESS_TOKEN = Cookies.get("Authorization");
+  const REFRESH_TOKEN = Cookies.get("RefreshToken");
 
-export default function folder() {
+  const [grab, setGrab] = useState<{ dataset: any }>();
+  const [targetName, setTargetName] = useState<number>();
+  const [targetPosition, setTargetPosition] = useState<number>();
+
+  const changeFolderList = async () => {
+    if (!targetName || targetPosition == undefined) return;
+    try {
+      await ChangeFolder(ACCESS_TOKEN, targetName, targetPosition);
+    } catch (err: any) {
+      if (err.response?.status == 401) {
+        const token = await GetUserRefresh(ACCESS_TOKEN, REFRESH_TOKEN);
+        saveCookiesAndRedirect(
+          token.data.Authorization,
+          token.data.RefreshToken
+        );
+        await ChangeFolder(ACCESS_TOKEN, targetName, targetPosition);
+      }
+    }
+  };
+
+  useEffect(() => {
+    changeFolderList().then(() => loadFolderList());
+  }, [ACCESS_TOKEN, REFRESH_TOKEN, targetName, targetPosition]);
+
+  const onDragStart = (e: React.DragEvent<HTMLAnchorElement>) => {
+    setGrab(e.currentTarget);
+  };
+
+  const onDrop = (e: React.DragEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setTargetName(grab?.dataset.name);
+    setTargetPosition(Number(e.currentTarget.dataset.position));
+  };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const currentIndex = checkedItems.indexOf(Number(value));
+    const newCheckedItems = [...checkedItems];
+
+    if (currentIndex === -1) {
+      newCheckedItems.push(Number(value));
+    } else {
+      newCheckedItems.splice(currentIndex, 1);
+    }
+
+    setCheckedItems(newCheckedItems);
+  };
+
   return (
     <div className={st.folders}>
-      {folderList.map((e: FolderList) => {
+      {folderList?.map((folder: Folder, index: number) => {
         return (
-          <Link
-            href={{
-              pathname: `/repository/${e.id}`,
-            }}
-            key={e.id}
-            className={st.folder}
-          >
-            <div>
-              <Image src={`images/folder/${e.color}.svg`} alt="폴더" width={128} height={128} />
-            </div>
-            <p>{e.name}</p>
-          </Link>
+          <div key={index} data-position={index}>
+            <Link
+              href={`/repository/${folder.id}`}
+              {...(clickDelete ? { onClick: (e) => e.preventDefault() } : {})}
+              data-position={index}
+              data-name={folder.id}
+              onDragOver={(e) => e.preventDefault()}
+              onDragStart={onDragStart}
+              onDrop={onDrop}
+              draggable={!clickDelete}
+            >
+              <div className={st.folder} data-position={index}>
+                {clickDelete && folder.name !== "기본 폴더" && (
+                  <input
+                    type="checkbox"
+                    value={folder.id}
+                    checked={checkedItems.indexOf(folder.id) !== -1}
+                    onChange={handleCheckboxChange}
+                    onClick={(event) => event.stopPropagation()}
+                  />
+                )}
+                <div data-position={index} data-name={folder.id}>
+                  <Image
+                    data-position={index}
+                    data-name={folder.id}
+                    src={`images/folder/${folder.color}.svg`}
+                    alt="폴더"
+                    width={128}
+                    height={128}
+                    draggable={false}
+                    priority
+                  />
+                </div>
+                <p data-position={index} data-name={folder.id}>
+                  {folder.name}
+                </p>
+              </div>
+            </Link>
+          </div>
         );
       })}
     </div>

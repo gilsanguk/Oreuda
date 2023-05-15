@@ -7,6 +7,7 @@ import { mainCompChoiceData } from "./Main";
 
 export default function MainSelectBtn() {
   const nextComp = useAppSelector(selectReadme).nextComp;
+
   const dispatch = useAppDispatch();
 
   const onClickRemoveComp = (e: any) => {
@@ -23,7 +24,7 @@ export default function MainSelectBtn() {
             onClick={onClickRemoveComp}
             className={st.choiceComp}
           >
-            {mainCompChoiceData[el]}
+            {mainCompChoiceData[el].split("(")[0]}
           </div>
         );
       })}
