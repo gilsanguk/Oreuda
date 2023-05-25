@@ -84,7 +84,8 @@
 # 크롬 확장프로그램 미리보기
 ### https://chrome.google.com/webstore/detail/oreuda/hooeinlffeekoieamkdbbphnjmclpdmp?hl=ko
 ## 크롬 익스텐션
-언제 어디서든 깃 레포지토리를 관리할 수 있습니다.
+<p>언제 어디서든 깃 레포지토리를 관리할 수 있습니다.</p>
+
 ![크롬](https://github.com/tykimdream/2023_2QT_ALGO/assets/53204415/28e890a0-13dd-425c-bcf0-40bf4971a7ef)
 
 <br/>
